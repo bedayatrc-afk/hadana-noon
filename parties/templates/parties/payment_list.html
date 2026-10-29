@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سجل المدفوعات والرسوم</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #f3f4f6; padding: 20px; }
+        .print-only { display: none; }
+        @media print {
+            .no-print { display: none; }
+            .print-only { display: block; }
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'accounts/css/app.css' %}">
+</head>
+<body>
+
+<div class="max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-lg mt-5">
+    <h2 class="text-3xl font-bold text-center text-gray-800 mb-8">💰 سجل الرسوم والمدفوعات</h2>
+    
+    <div class="flex justify-center gap-4 mb-8 no-print">
+        <a href="{% url 'add_payment' %}" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl transition">➕ تسجيل عملية دفع جديدة</a>
+        <a href="{% url 'parties_home' %}" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition">⬅️ العودة للرئيسية</a>
+    </div>
+    
+    <div class="overflow-x-auto">
+        <table class="w-full text-right border-collapse">
+            <thead>
+                <tr class="bg-gray-200 text-gray-700">
+                    <th class="p-4">👦 اسم الطالب</th>
+                    <th class="p-4">💵 المبلغ</th>
+                    <th class="p-4">🕒 التاريخ</th>
+                    <th class="p-4">📝 ملاحظات</th>
+                    <th class="p-4 no-print">🖨️ الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="p-4 font-bold">{{ payment.student.name }}</td>
+                    <td class="p-4">{{ payment.amount }} جنيه</td>
+                    <td class="p-4">{{ payment.payment_date|date:"Y-m-d H:i" }}</td>
+                    <td class="p-4">{{ payment.notes|default:"---" }}</td>
+                    <td class="p-4 no-print">
+                        <button type="button" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-bold" 
+                            onclick="printSingleReceipt(this)"
+                            data-student="{{ payment.student.name }}"
+                            data-amount="{{ payment.amount }}"
+                            data-date="{{ payment.payment_date|date:'Y-m-d H:i' }}"
+                            data-notes="{{ payment.notes|default:'---' }}">
+                            📄 طباعة الوصل
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function escapeReceiptText(value) {
+        const replacements = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+        return String(value ?? '').replace(/[&<>"']/g, (char) => replacements[char]);
+    }
+
+    function printSingleReceipt(btn) {
+        const student = escapeReceiptText(btn.getAttribute('data-student'));
+        const amount = escapeReceiptText(btn.getAttribute('data-amount'));
+        const date = escapeReceiptText(btn.getAttribute('data-date'));
+        const notes = escapeReceiptText(btn.getAttribute('data-notes'));
+
+        const originalContent = document.body.innerHTML;
+        
+        const receiptWindow = `
+            <div style="direction: rtl; font-family: sans-serif; padding: 40px; max-width: 400px; margin: auto; border: 2px dashed #d0ad5b; border-radius: 15px;">
+                <h1 style="text-align: center; color: #0b3d2e;">حضانة نون 🏫</h1>
+                <hr style="border: 1px solid #ddd; margin: 20px 0;">
+                <h2 style="text-align: center;">وصل استلام رسوم 🧾</h2>
+                <div style="margin: 20px 0; line-height: 2.5; font-size: 18px;">
+                    <p><strong>اسم الطالب:</strong> ${student}</p>
+                    <p><strong>المبلغ المستلم:</strong> ${amount} جنيه</p>
+                    <p><strong>تاريخ العملية:</strong> ${date}</p>
+                    <p><strong>ملاحظات:</strong> ${notes}</p>
+                </div>
+                <hr style="border: 1px solid #ddd; margin: 20px 0;">
+                <p style="text-align: center; font-size: 16px; color: #555;">نشكركم على ثقتكم الغالية ✨</p>
+            </div>
+        `;
+
+        document.body.innerHTML = receiptWindow;
+        window.print();
+        
+        // استعادة الصفحة الأصلية
+        document.body.innerHTML = originalContent;
+        window.location.reload(); 
+    }
+</script>
+
+</body>
+</html>

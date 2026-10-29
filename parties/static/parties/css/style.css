@@ -1,0 +1,229 @@
+/* الصفحة كاملة */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif; 
+}
+
+/* الخلفية */
+
+body{
+    background:linear-gradient(135deg,#4facfe,#00f2fe);
+    background-size:300% 300%;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    animation:bgMove 10s infinite alternate;
+    flex-direction:column;
+}
+
+/* حركة الخلفية */
+
+@keyframes bgMove {
+
+    0%{
+        background-position:left;
+    }
+
+    100%{
+        background-position:right;
+    }
+}
+
+/* الصندوق الأساسي */
+
+.home-box,
+.login-box,
+form{
+
+    background:white;
+    width:400px;
+    padding:40px;
+    border-radius:20px;
+    box-shadow:0 10px 35px rgba(0,0,0,0.25);
+    text-align:center;
+
+    animation:fadeIn 0.8s ease-in-out;
+    margin-top:20px;
+}
+
+/* أنيميشن الدخول */
+
+@keyframes fadeIn {
+
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* العناوين */
+
+h1,
+h2{
+    color:#222;
+    margin-bottom:20px;
+    letter-spacing:1px;
+}
+
+/* النصوص */
+
+p{
+    color:#666;
+    margin-bottom:25px;
+    font-size:16px;
+}
+
+/* الإدخالات */
+
+input,
+select,
+textarea{
+
+    width:100%;
+    padding:14px;
+    margin-top:15px;
+
+    border:1px solid #ccc;
+    border-radius:10px;
+
+    font-size:16px;
+
+    outline:none;
+
+    transition:0.3s;
+}
+
+/* Hover */
+
+input:hover,
+select:hover,
+textarea:hover{
+    border-color:#4facfe;
+}
+
+/* Focus */
+
+input:focus,
+select:focus,
+textarea:focus{
+
+    border-color:#007bff;
+
+    box-shadow:0 0 10px rgba(0,123,255,0.3);
+}
+
+/* textarea */
+
+textarea{
+    min-height:100px;
+    resize:none;
+}
+
+/* select */
+
+select{
+    background:white;
+    cursor:pointer;
+}
+
+/* الأزرار */
+
+button{
+
+    width:100%;
+    padding:14px;
+
+    margin-top:20px;
+
+    border:none;
+    border-radius:10px;
+
+    background:#007bff;
+    color:white;
+
+    font-size:18px;
+
+    cursor:pointer;
+
+    transition:0.3s;
+
+    box-shadow:0 5px 15px rgba(0,123,255,0.3);
+}
+
+/* Hover */
+
+button:hover{
+
+    background:#0056b3;
+
+    transform:scale(1.03);
+}
+
+/* عند الضغط */
+
+button:active{
+    transform:scale(0.97);
+}
+
+/* الروابط */
+
+a{
+    text-decoration:none;
+}
+
+/* لينكات صغيرة */
+
+.link{
+    margin-top:20px;
+}
+
+.link a{
+    color:#007bff;
+    font-size:15px;
+}
+
+.link a:hover{
+    text-decoration:underline;
+}
+
+/* رسائل النجاح والخطأ */
+
+.success {
+    text-align: center;
+    color: green;
+    margin-top: 10px;
+}
+
+.error {
+    text-align: center;
+    color: red;
+    margin-top: 10px;
+}
+
+/* Responsive */
+
+@media(max-width:500px){
+
+    body{
+        padding:20px;
+    }
+
+    .home-box,
+    .login-box,
+    form{
+
+        width:90%;
+        padding:30px;
+
+        border-radius:15px;
+    }
+}

@@ -1,0 +1,229 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قائمة تقارير الأطفال اليومية</title>
+    
+    <style>
+        /* إعدادات الخلفية العامة للشاشة */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #082f23 0%, #176b4a 70%, #d0ad5b 100%);
+            margin: 0;
+            padding: 20px; /* مسافة حول الصفحة */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* تبدأ من فوق عشان الجدول كبير */
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* صندوق التقارير الأبيض المتناسق */
+        .reports-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 1200px; /* عرض كبير ومناسب للجدول */
+            text-align: center;
+            box-sizing: border-box;
+            margin-top: 20px;
+        }
+
+        .reports-container h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 26px;
+        }
+
+        /* حاوية الأزرار المتناسقة */
+        .buttons-header {
+            display: flex;
+            justify-content: center; /* تمركز الأزرار في المنتصف */
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap; /* عشان يتجاوب مع الموبايل */
+        }
+
+        /* التنسيق العام للأزرار */
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-add {
+            background-color: #176b4a;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background-color: #0b3d2e;
+        }
+
+        .btn-home {
+            background-color: #b58a36;
+            color: white;
+        }
+
+        .btn-home:hover {
+            background-color: #9b7327;
+        }
+
+        /* حاوية الجدول عشان تسمح بالتمرير الأفقي على الموبايل */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        /* تنسيق الجدول */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            min-width: 900px; /* لضمان عدم انضغاط البيانات */
+        }
+
+        table th, table td {
+            text-align: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+            color: #333;
+            vertical-align: middle;
+        }
+
+        /* رأس الجدول (الأخضر) */
+        table thead th {
+            background-color: #4caf50;
+            color: white;
+            font-weight: 600;
+            position: sticky; /* رأس ثابت عند التمرير */
+            top: 0;
+        }
+
+        /* تلوين الصفوف بالتناوب */
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* تنسيق الرموز التعبيرية في الرأس */
+        table thead th strong {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+    </style>
+    <link rel="stylesheet" href="{% static 'accounts/css/app.css' %}">
+</head>
+
+<body>
+
+<div class="reports-container">
+
+    <h2>📋 قائمة تقارير الأطفال اليومية</h2>
+    
+    <div class="buttons-header">
+        <a href="{% url 'add_child_report' %}" class="btn btn-add">
+            ➕ إضافة تقرير جديد
+        </a>
+        <a href="{% url 'parties_home' %}" class="btn btn-home">
+            ⬅️ العودة للرئيسية
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        <strong>👦</strong>
+                        اسم الطفل
+                    </th>
+                    <th>
+                        <strong>🕒</strong>
+                        التاريخ والوقت
+                    </th>
+                    <th>
+                        <strong>😊</strong>
+                        الحالة اليومية
+                    </th>
+                    <th>
+                        <strong>📚</strong>
+                        المادة المدروسة
+                    </th>
+                    <th>
+                        <strong>🧠</strong>
+                        الاستجابة
+                    </th>
+                    <th>
+                        <strong>👶</strong>
+                        السلوك
+                    </th>
+                    <th>
+                        <strong>🚻</strong>
+                        الحمام
+                    </th>
+                    <th>
+                        <strong>😴</strong>
+                        النوم
+                    </th>
+                    <th>
+                        <strong>📝</strong>
+                        ملاحظات المعلمة
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in reports %}
+                <tr>
+                    <td>{{ report.student }}</td>
+                    <td>{{ report.date_time|date:"Y-m-d H:i" }}</td>
+                    <td>{{ report.child_status }}</td>
+                    <td>{{ report.study }}</td>
+                    <td>{{ report.response_level }}</td>
+                    <td>{{ report.behavior_level }}</td>
+                    <td>
+                        من: {{ report.bath_from|time:"H:i" }}<br>
+                        إلى: {{ report.bath_to|time:"H:i" }}
+                    </td>
+                    <td>
+                        من: {{ report.sleep_from|time:"H:i" }}<br>
+                        إلى: {{ report.sleep_to|time:"H:i" }}
+                    </td>
+                    <td>{{ report.teacher_note }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9">لا توجد تقارير مسجلة بعد.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</body>
+
+</html>

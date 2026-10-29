@@ -1,0 +1,339 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>🎓 تسجيل طالب</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+ 
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            background: #F5F2EC;
+            color: #1C1C1E;
+            direction: rtl;
+            min-height: 100vh;
+        }
+ 
+        /* ════════════════════════════
+           CONTENT
+        ════════════════════════════ */
+        .content {
+            padding: 90px 24px 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+ 
+        h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1C1C1E;
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        .page-sub {
+            font-size: 13px;
+            color: #8E8E93;
+            text-align: center;
+            margin-bottom: 28px;
+        }
+ 
+        /* ════════════════════════════
+           FORM CARD
+        ════════════════════════════ */
+        form {
+            background: #fff;
+            padding: 36px 32px 32px;
+            border-radius: 24px;
+            box-shadow: 0 4px 60px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.04);
+            max-width: 420px;
+            width: 100%;
+            color: #1C1C1E;
+        }
+ 
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #8E8E93;
+            letter-spacing: .6px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+ 
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 13px 16px;
+            margin-bottom: 16px;
+            border: 1.5px solid #E5E0D5;
+            border-radius: 13px;
+            outline: none;
+            font-family: 'Cairo', sans-serif;
+            font-size: 15px;
+            color: #1C1C1E;
+            background: #FAFAF7;
+            direction: rtl;
+            transition: border-color .2s, box-shadow .2s, background .2s;
+        }
+        input:focus {
+            border-color: #5ECBA1;
+            box-shadow: 0 0 0 4px rgba(94,203,161,.13);
+            background: #fff;
+        }
+ 
+        .messages {
+            background: rgba(94,203,161,.12);
+            border: 1px solid rgba(94,203,161,.3);
+            color: #1a7a57;
+            padding: 12px 16px;
+            border-radius: 13px;
+            margin-bottom: 16px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+ 
+        /* ════════════════════════════
+           ✅ SUBMIT BTN
+        ════════════════════════════ */
+        button[type="submit"] {
+            width: 100%;
+            padding: 14px;
+            margin-top: 4px;
+            background: #1C1C1E;
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .2s, transform .15s;
+            letter-spacing: .3px;
+        }
+        button[type="submit"]:hover { background: #2C2C2E; transform: translateY(-1px); }
+        button[type="submit"]:active { transform: scale(.98); }
+ 
+        /* ════════════════════════════
+           ✅ NAVBAR
+        ════════════════════════════ */
+        .navbar {
+            background: #fff;
+            border-bottom: 1.5px solid #E5E0D5;
+            padding: 0 28px;
+            height: 66px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,.05);
+        }
+        .navbar-brand { display: flex; align-items: center; gap: 14px; }
+        .navbar-brand svg { width: 90px; height: 30px; }
+        .navbar-brand h1 {
+            margin: 0; font-size: 17px;
+            font-weight: 700; color: #1C1C1E;
+        }
+        .navbar-sub { font-size: 11px; color: #8E8E93; }
+ 
+        /* ════════════════════════════
+           ✅ TOGGLE BTN
+        ════════════════════════════ */
+        .toggle-btn {
+            background: transparent;
+            border: 1.5px solid #E5E0D5;
+            border-radius: 11px;
+            width: 40px; height: 40px;
+            display: flex; align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-direction: column;
+            gap: 5px; padding: 11px 10px;
+            transition: background .2s, border-color .2s;
+        }
+        .toggle-btn:hover { background: #F5F2EC; border-color: #5ECBA1; }
+        .toggle-btn span {
+            display: block; width: 18px; height: 2px;
+            background: #1C1C1E; border-radius: 2px; transition: all .3s;
+        }
+        .toggle-btn.open span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+        .toggle-btn.open span:nth-child(2){ opacity: 0; transform: scaleX(0); }
+        .toggle-btn.open span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+ 
+        /* ════════════════════════════
+           ✅ SIDEBAR
+        ════════════════════════════ */
+        .sidebar {
+            position: fixed;
+            top: 0; right: 0; bottom: 0;
+            width: 270px;
+            background: #1C1C1E;
+            color: #fff;
+            transition: transform .35s cubic-bezier(.16,1,.3,1);
+            overflow-y: auto;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+        }
+        .sidebar.closed { transform: translateX(100%); }
+        .sb-head {
+            padding: 24px 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .sb-head svg { width: 100px; height: 34px; }
+        .sb-close {
+            background: rgba(255,255,255,.08); border: none;
+            width: 34px; height: 34px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #fff; font-size: 18px;
+            transition: background .2s; font-family: 'Cairo', sans-serif;
+        }
+        .sb-close:hover { background: rgba(255,255,255,.16); }
+        .sb-user {
+            margin: 16px 20px;
+            background: rgba(94,203,161,.12);
+            border: 1px solid rgba(94,203,161,.25);
+            border-radius: 14px; padding: 12px 16px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .sb-avatar {
+            width: 38px; height: 38px; border-radius: 50%;
+            background: #5ECBA1;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; font-weight: 700; color: #1C1C1E; flex-shrink: 0;
+        }
+        .sb-uname { font-size: 14px; font-weight: 600; color: #fff; }
+        .sb-role  { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 1px; }
+        .sb-section { padding: 18px 20px 6px; }
+        .sb-section-label {
+            font-size: 10px; font-weight: 700;
+            color: rgba(255,255,255,.3);
+            letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;
+        }
+        .sb-link {
+            display: flex; align-items: center; gap: 11px;
+            color: rgba(255,255,255,.7); text-decoration: none;
+            padding: 10px 20px; margin: 2px 12px;
+            border-radius: 11px; font-size: 14px; font-weight: 600;
+            transition: background .2s, color .2s;
+        }
+        .sb-link:hover { background: rgba(255,255,255,.08); color: #fff; }
+        .sb-link.active { background: #5ECBA1; color: #1C1C1E; }
+        .sb-icon {
+            width: 32px; height: 32px; border-radius: 9px;
+            background: rgba(255,255,255,.08);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; flex-shrink: 0;
+        }
+        .sb-link.active .sb-icon { background: rgba(28,28,30,.15); }
+        .sb-bottom {
+            margin-top: auto; padding: 16px 12px;
+            border-top: 1px solid rgba(255,255,255,.08);
+        }
+        .sb-logout {
+            display: flex; align-items: center; gap: 11px;
+            color: rgba(255,100,80,.8); text-decoration: none;
+            padding: 10px 20px; border-radius: 11px;
+            font-size: 14px; font-weight: 600;
+            transition: background .2s, color .2s;
+            cursor: pointer; border: none; background: transparent;
+            width: 100%; font-family: 'Cairo', sans-serif;
+        }
+        .sb-logout:hover { background: rgba(255,100,80,.1); color: #ff6450; }
+        .overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,.4);
+            z-index: 150; opacity: 0; pointer-events: none;
+            transition: opacity .35s; backdrop-filter: blur(2px);
+        }
+        .overlay.show { opacity: 1; pointer-events: all; }
+ 
+        /* ════════════════════════════
+           LOGO in form (modern)
+        ════════════════════════════ */
+        .form-logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .form-logo svg { width: 130px; }
+    </style>
+    <link rel="stylesheet" href="{% static 'accounts/css/app.css' %}">
+</head>
+<body>
+ 
+    <!-- ✅ الهيدر -->
+    <div class="navbar">
+        <div class="navbar-brand">
+            <svg viewBox="0 0 200 60" fill="none">
+                <path d="M16 50 L16 26 Q16 12 28 12 Q40 12 40 26 L40 50" stroke="#1C1C1E" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="80" cy="31" r="21" fill="#5ECBA1"/>
+                <path d="M69 35 Q80 44 91 35" stroke="#1C1C1E" stroke-width="3" stroke-linecap="round" fill="none"/>
+                <circle cx="130" cy="31" r="16" stroke="#1C1C1E" stroke-width="8" fill="none"/>
+                <path d="M157 50 L157 26 Q157 12 169 12 Q181 12 181 26 L181 50" stroke="#1C1C1E" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div>
+                <h1>حضانة نون</h1>
+                <div class="navbar-sub">تسجيل طالب</div>
+            </div>
+        </div>
+        <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+ 
+    {% include 'sidebar.html' %}
+
+    <!-- ✅ المحتوى -->
+    <div class="content">
+        <form method="POST" action="{% url 'register_student' %}">
+            {% csrf_token %}
+ 
+            <!-- لوجو نون العصري بدل الشعار القديم -->
+            <div class="form-logo">
+                <svg viewBox="0 0 380 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M30 88 L30 46 Q30 22 52 22 Q74 22 74 46 L74 88"
+                        stroke="#1C1C1E" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="148" cy="55" r="38" fill="#5ECBA1"/>
+                    <path d="M132 61 Q148 75 164 61"
+                        stroke="#1C1C1E" stroke-width="5" stroke-linecap="round" fill="none"/>
+                    <circle cx="240" cy="55" r="29"
+                        stroke="#1C1C1E" stroke-width="14" fill="none"/>
+                    <path d="M285 88 L285 46 Q285 22 307 22 Q329 22 329 46 L329 88"
+                        stroke="#1C1C1E" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+ 
+            <h1>تسجيل طالب جديد 🎒</h1>
+            <p class="page-sub">أدخل بيانات الطالب بالكامل</p>
+ 
+            {% if messages %}
+              <div class="messages">
+                {% for message in messages %}{{ message }}{% endfor %}
+              </div>
+            {% endif %}
+ 
+            <label for="username">اسم الطالب</label>
+            <input type="text" id="username" name="name" placeholder="الاسم بالكامل" required>
+ 
+            <label for="phone">رقم الهاتف</label>
+            <input type="text" id="phone" name="phone" placeholder="01xxxxxxxxx">
+ 
+            <label for="grade">الصف الدراسي</label>
+            <input type="number" id="grade" name="grade" placeholder="مثال: 1">
+ 
+            <button type="submit">💾 حفظ</button>
+        </form>
+    </div>
+ 
+    </body>
+</html>

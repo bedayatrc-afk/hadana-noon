@@ -1,0 +1,357 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة ولي الأمر</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@500;700;800;900&family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0D1614;
+            --bg-2: #0A1210;
+            --surface: rgba(255,255,255,0.045);
+            --surface-strong: rgba(255,255,255,0.075);
+            --border: rgba(255,255,255,0.09);
+            --ink: #EEF4F1;
+            --ink-soft: #8DA098;
+            --mint: #33D6A6;
+            --mint-soft: rgba(51,214,166,0.14);
+            --amber: #F2B84B;
+            --amber-soft: rgba(242,184,75,0.14);
+            --coral: #F2685C;
+            --coral-soft: rgba(242,104,92,0.14);
+        }
+ 
+        * { box-sizing: border-box; }
+ 
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 32px 20px 70px;
+            color: var(--ink);
+            position: relative;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+ 
+        /* توهج خلفي ناعم */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -180px; right: -160px;
+            width: 480px; height: 480px;
+            background: radial-gradient(circle, rgba(51,214,166,0.16), transparent 70%);
+            filter: blur(10px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -200px; left: -160px;
+            width: 520px; height: 520px;
+            background: radial-gradient(circle, rgba(242,184,75,0.10), transparent 70%);
+            filter: blur(10px);
+            z-index: 0;
+            pointer-events: none;
+        }
+ 
+        .container { max-width: 980px; margin: 0 auto; position: relative; z-index: 1; }
+ 
+        /* الهيدر */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 26px;
+        }
+        .header-text { display: flex; align-items: center; gap: 16px; }
+        .greeting-icon {
+            width: 50px; height: 50px;
+            background: linear-gradient(135deg, var(--mint), #1F9E7A);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5em;
+            flex-shrink: 0;
+            box-shadow: 0 8px 24px rgba(51,214,166,0.25);
+        }
+        .header h2 {
+            margin: 0;
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 900;
+            font-size: 1.6em;
+            letter-spacing: -0.01em;
+        }
+        .header p {
+            margin: 3px 0 0;
+            color: var(--ink-soft);
+            font-size: 0.92em;
+        }
+ 
+        /* شرائط الإحصائيات */
+        .stats-row { display: flex; gap: 12px; margin-bottom: 26px; }
+        .stat-chip {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            backdrop-filter: blur(14px);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .stat-chip:hover { transform: translateY(-2px); border-color: rgba(255,255,255,0.16); }
+        .stat-chip .icon {
+            width: 42px; height: 42px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+        .stat-chip.absences .icon { background: var(--coral-soft); }
+        .stat-chip.expenses .icon { background: var(--amber-soft); }
+        .stat-chip.evaluations .icon { background: var(--mint-soft); }
+        .stat-chip .num {
+            font-family: 'Tajawal', sans-serif;
+            font-weight: 800;
+            font-size: 1.55em;
+            line-height: 1;
+        }
+        .stat-chip.absences .num { color: var(--coral); }
+        .stat-chip.expenses .num { color: var(--amber); }
+        .stat-chip.evaluations .num { color: var(--mint); }
+        .stat-chip .label {
+            color: var(--ink-soft);
+            font-size: 0.82em;
+            margin-top: 3px;
+        }
+ 
+        /* الأقسام العامة */
+        .section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(14px);
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+        }
+        .section-title {
+            font-family: 'Tajawal', sans-serif;
+            font-size: 1.08em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+ 
+        /* الشريط الأسبوعي (السمة المميزة) */
+        .week-strip {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 4px 0;
+        }
+        .week-strip::before {
+            content: '';
+            position: absolute;
+            top: 34px;
+            right: 4%;
+            left: 4%;
+            height: 0;
+            border-top: 2px dashed rgba(255,255,255,0.12);
+            z-index: 0;
+        }
+        .day-card {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 9px;
+            flex: 1;
+        }
+        .day-card .stamp {
+            width: 64px; height: 64px;
+            border-radius: 50%;
+            background: var(--surface-strong);
+            border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6em;
+            transition: transform 0.2s ease;
+        }
+        .day-card:hover .stamp { transform: scale(1.08); }
+        .day-card.mood-happy .stamp { border-color: var(--mint); box-shadow: 0 0 0 4px var(--mint-soft); }
+        .day-card.mood-neutral .stamp { border-color: var(--amber); box-shadow: 0 0 0 4px var(--amber-soft); }
+        .day-card.mood-sad .stamp { border-color: var(--coral); box-shadow: 0 0 0 4px var(--coral-soft); }
+        .day-card.mood-none .stamp { border-style: dashed; color: var(--ink-soft); }
+        .day-card.mood-home .stamp { background: rgba(255,255,255,0.03); }
+        .day-card .day-name {
+            font-weight: 600;
+            font-size: 0.85em;
+            color: var(--ink-soft);
+        }
+        .week-empty-note {
+            text-align: center;
+            color: var(--ink-soft);
+            font-size: 0.88em;
+            margin: 22px 0 2px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+        }
+ 
+        /* الجداول */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px 10px; text-align: right; border-bottom: 1px solid var(--border); font-size: 0.95em; }
+        th { color: var(--ink-soft); font-weight: 600; font-size: 0.85em; }
+        tbody tr:last-child td { border-bottom: none; }
+        tbody tr:hover td { background: rgba(255,255,255,0.02); }
+ 
+        .badge {
+            display: inline-block;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.82em;
+            font-weight: 600;
+        }
+        .badge.present { background: var(--mint-soft); color: var(--mint); }
+        .badge.absent { background: var(--coral-soft); color: var(--coral); }
+        .badge.paid { background: var(--mint-soft); color: var(--mint); }
+        .badge.pending { background: var(--amber-soft); color: var(--amber); }
+ 
+        .empty-state {
+            text-align: center;
+            padding: 34px 10px;
+            color: var(--ink-soft);
+            font-size: 0.92em;
+        }
+        .empty-state .empty-icon {
+            font-size: 1.9em;
+            display: block;
+            margin-bottom: 10px;
+            opacity: 0.7;
+        }
+ 
+        @media (max-width: 640px) {
+            .stats-row { flex-direction: column; }
+            .week-strip { flex-wrap: wrap; row-gap: 20px; }
+            .week-strip::before { display: none; }
+        }
+    </style>
+</head>
+<body>
+ 
+<div class="container">
+    <!-- الهيدر -->
+    <div class="header">
+        <div class="header-text">
+            <div class="greeting-icon">👋</div>
+            <div>
+                <h2>أهلاً، {{ request.user.first_name|default:"ولي الأمر" }}</h2>
+                <p>متابعة يومية لحالة ابنك في المدرسة</p>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- الإحصائيات -->
+    <div class="stats-row">
+        <div class="stat-chip absences">
+            <div class="icon">🚫</div>
+            <div>
+                <div class="num">{{ total_absences|default:0 }}</div>
+                <div class="label">الغيابات</div>
+            </div>
+        </div>
+        <div class="stat-chip expenses">
+            <div class="icon">💰</div>
+            <div>
+                <div class="num">{{ total_expenses|default:0 }}</div>
+                <div class="label">المصاريف</div>
+            </div>
+        </div>
+        <div class="stat-chip evaluations">
+            <div class="icon">⭐</div>
+            <div>
+                <div class="num">{{ total_evaluations|default:0 }}</div>
+                <div class="label">التقييمات</div>
+            </div>
+        </div>
+    </div>
+ 
+    <!-- التقييمات اليومية -->
+    <div class="section">
+        <div class="section-title">
+            <span>أسبوع ابنك بالصور</span>
+        </div>
+        <div class="week-strip">
+            <div class="day-card mood-happy"><div class="stamp">😊</div><span class="day-name">سبت</span></div>
+            <div class="day-card mood-neutral"><div class="stamp">😐</div><span class="day-name">أحد</span></div>
+            <div class="day-card mood-happy"><div class="stamp">😊</div><span class="day-name">اتنين</span></div>
+            <div class="day-card mood-sad"><div class="stamp">😢</div><span class="day-name">ثلاثاء</span></div>
+            <div class="day-card mood-happy"><div class="stamp">😊</div><span class="day-name">اربعاء</span></div>
+            <div class="day-card mood-none"><div class="stamp">؟</div><span class="day-name">خميس</span></div>
+            <div class="day-card mood-home"><div class="stamp">🏠</div><span class="day-name">جمعة</span></div>
+        </div>
+        <p class="week-empty-note">لا توجد تقييمات مسجلة حتى الآن.</p>
+    </div>
+ 
+    <!-- الحضور والغياب -->
+    <div class="section">
+        <div class="section-title">
+            <span>الحضور والغياب</span>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>التاريخ</th>
+                    <th>الحضور</th>
+                    <th>ملاحظات</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="3">
+                        <div class="empty-state">
+                            <span class="empty-icon">🗓️</span>
+                            لا يوجد سجل حضور حتى الآن.
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+ 
+    <!-- المصاريف والمدفوعات -->
+    <div class="section">
+        <div class="section-title">
+            <span>المصاريف والمدفوعات</span>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>البند</th>
+                    <th>المبلغ</th>
+                    <th>الحالة</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="3">
+                        <div class="empty-state">
+                            <span class="empty-icon">🧾</span>
+                            لا توجد مصاريف مسجلة حتى الآن.
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+ 
+</body>
+</html>

@@ -1,0 +1,533 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سداد الرسوم - حضانة نون</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #F5F2EC;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            color: #1C1C1E;
+        }
+
+        /* ── Navbar ── */
+        .navbar {
+            background: #FFFFFF;
+            color: #1C1C1E;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,.05);
+            border-bottom: 1px solid #E5E0D5;
+        }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .navbar-brand svg { width: 90px; height: 30px; }
+        .navbar h1 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1C1C1E;
+        }
+        .navbar-sub { font-size: 11px; color: #8E8E93; }
+
+        /* ── Toggle Button ── */
+        .toggle-btn {
+            background: #F5F2EC;
+            color: #1C1C1E;
+            border: 1.5px solid #E5E0D5;
+            border-radius: 11px; width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; flex-direction: column;
+            gap: 5px; padding: 11px 10px;
+            transition: background .2s, border-color .2s;
+        }
+        .toggle-btn:hover { background: #E5E0D5; }
+        .toggle-btn span {
+            display: block; width: 18px; height: 2px;
+            background: #1C1C1E; border-radius: 2px; transition: all .3s;
+        }
+        .toggle-btn.open span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+        .toggle-btn.open span:nth-child(2){ opacity: 0; transform: scaleX(0); }
+        .toggle-btn.open span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+        /* ── Messages / Alerts ── */
+        .messages-container {
+            max-width: 450px;
+            margin: 16px auto 0;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .alert {
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideDown .35s cubic-bezier(.16,1,.3,1);
+        }
+        .alert-success {
+            background: rgba(94,203,161,.12);
+            border: 1px solid rgba(94,203,161,.35);
+            color: #2E9D6F;
+        }
+        .alert-error {
+            background: rgba(255,100,80,.12);
+            border: 1px solid rgba(255,100,80,.35);
+            color: #D4503A;
+        }
+        .alert-warning {
+            background: rgba(255,190,11,.12);
+            border: 1px solid rgba(255,190,11,.35);
+            color: #C99A00;
+        }
+        .alert-info {
+            background: rgba(0,122,255,.10);
+            border: 1px solid rgba(0,122,255,.30);
+            color: #0062CC;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ── الحاوية الأساسية ── */
+        .main-content-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: calc(100vh - 70px);
+            padding: 20px;
+        }
+
+        .login-box {
+            background-color: #FFFFFF;
+            padding: 36px 32px 32px;
+            border-radius: 24px;
+            box-shadow: 0 4px 60px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.04);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+        }
+
+        .login-box h2 {
+            color: #1C1C1E;
+            margin-bottom: 5px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .login-box > p {
+            color: #8E8E93;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            text-align: right;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1C1C1E;
+        }
+        .form-label .req { color: #FF6450; }
+
+        form input[type="text"],
+        form input[type="number"],
+        form input[type="tel"],
+        form input[type="date"],
+        form input[type="datetime-local"],
+        form input[type="file"],
+        form select,
+        form textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid #E5E0D5;
+            background: #FAFAF7;
+            border-radius: 13px;
+            font-size: 15px;
+            font-family: 'Cairo', sans-serif;
+            color: #1C1C1E;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        form input:focus, form textarea:focus, form select:focus {
+            border-color: #5ECBA1;
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(94,203,161,.13);
+        }
+
+        form textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        form input[type="file"] {
+            padding: 11px 16px;
+            cursor: pointer;
+        }
+
+        /* ── Field Errors ── */
+        .field-errors {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .field-error {
+            font-size: 12px;
+            color: #D4503A;
+            font-weight: 600;
+        }
+
+        /* ── Select2 Overrides ── */
+        .select2-container--default .select2-selection--single {
+            height: 50px !important;
+            border: 1.5px solid #E5E0D5 !important;
+            background: #FAFAF7 !important;
+            border-radius: 13px !important;
+            display: flex !important;
+            align-items: center !important;
+            text-align: right !important;
+        }
+        .select2-container--default.select2-container--focus .select2-selection--single,
+        .select2-container--default.select2-container--open .select2-selection--single {
+            border-color: #5ECBA1 !important;
+            box-shadow: 0 0 0 4px rgba(94,203,161,.13) !important;
+            background: #fff !important;
+        }
+        .select2-container { width: 100% !important; }
+        .select2-dropdown {
+            border-radius: 13px !important;
+            text-align: right;
+            border: 1.5px solid #E5E0D5 !important;
+            font-family: 'Cairo', sans-serif;
+        }
+        .select2-selection__rendered {
+            font-family: 'Cairo', sans-serif;
+            color: #1C1C1E !important;
+            line-height: 50px !important;
+            padding-right: 16px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 50px !important;
+            left: 10px;
+        }
+        .select2-container--default .select2-results__option--highlighted {
+            background: #5ECBA1 !important;
+            color: #1C1C1E !important;
+        }
+        .select2-results__option {
+            font-family: 'Cairo', sans-serif;
+            font-size: 14px;
+            padding: 10px 16px;
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 12px;
+            margin-top: 6px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-family: 'Cairo', sans-serif;
+            text-decoration: none;
+            border: none;
+        }
+
+        .btn-submit {
+            background-color: #1C1C1E;
+            color: #FFFFFF;
+        }
+        .btn-submit:hover {
+            background-color: #2C2C2E;
+            transform: translateY(-1px);
+        }
+
+        .btn-print {
+            background-color: #FFFFFF;
+            color: #1C1C1E;
+            border: 1.5px solid #E5E0D5;
+        }
+        .btn-print:hover {
+            background-color: #FAFAF7;
+            border-color: #B0A695;
+        }
+
+        .view-list-link {
+            text-align: center;
+            margin-top: 16px;
+        }
+        .view-list-link a {
+            color: #5ECBA1;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: color .2s;
+        }
+        .view-list-link a:hover { color: #4DBF90; }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            position: fixed; top: 0; right: 0; bottom: 0; width: 270px;
+            background: #1C1C1E; color: #fff;
+            transition: transform .35s cubic-bezier(.16,1,.3,1);
+            overflow-y: auto; z-index: 200; display: flex; flex-direction: column;
+        }
+        .sidebar.closed { transform: translateX(100%); }
+        .sb-head {
+            padding: 24px 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .sb-head svg { width: 100px; height: 34px; }
+        .sb-close {
+            background: rgba(255,255,255,.08); border: none;
+            width: 34px; height: 34px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #fff; font-size: 18px;
+            transition: background .2s; font-family: 'Cairo', sans-serif;
+        }
+        .sb-close:hover { background: rgba(255,255,255,.16); }
+        .sb-user {
+            margin: 16px 20px;
+            background: rgba(94,203,161,.12); border: 1px solid rgba(94,203,161,.25);
+            border-radius: 14px; padding: 12px 16px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .sb-avatar {
+            width: 38px; height: 38px; border-radius: 50%; background: #5ECBA1;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; font-weight: 700; color: #1C1C1E; flex-shrink: 0;
+        }
+        .sb-uname { font-size: 14px; font-weight: 600; color: #fff; }
+        .sb-role  { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 1px; }
+        .sb-section { padding: 18px 20px 6px; }
+        .sb-section-label {
+            font-size: 10px; font-weight: 700; color: rgba(255,255,255,.3);
+            letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;
+        }
+        .sb-link {
+            display: flex; align-items: center; gap: 11px;
+            color: rgba(255,255,255,.7); text-decoration: none;
+            padding: 10px 20px; margin: 2px 12px;
+            border-radius: 11px; font-size: 14px; font-weight: 600;
+            transition: background .2s, color .2s;
+        }
+        .sb-link:hover { background: rgba(255,255,255,.08); color: #fff; }
+        .sb-link.active { background: #5ECBA1; color: #1C1C1E; }
+        .sb-icon {
+            width: 32px; height: 32px; border-radius: 9px;
+            background: rgba(255,255,255,.08);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; flex-shrink: 0;
+        }
+        .sb-link.active .sb-icon { background: rgba(28,28,30,.15); }
+        .sb-bottom {
+            margin-top: auto; padding: 16px 12px;
+            border-top: 1px solid rgba(255,255,255,.08);
+        }
+        .sb-logout {
+            display: flex; align-items: center; gap: 11px;
+            color: rgba(255,100,80,.8); text-decoration: none;
+            padding: 10px 20px; border-radius: 11px;
+            font-size: 14px; font-weight: 600;
+            transition: background .2s, color .2s;
+            cursor: pointer; border: none; background: transparent;
+            width: 100%; font-family: 'Cairo', sans-serif;
+        }
+        .sb-logout:hover { background: rgba(255,100,80,.1); color: #ff6450; }
+        
+        .overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,.4);
+            z-index: 150; opacity: 0; pointer-events: none;
+            transition: opacity .35s; backdrop-filter: blur(2px);
+        }
+        .overlay.show { opacity: 1; pointer-events: all; }
+
+        @media print {
+            body { background: white !important; color: black; }
+            .navbar, .sidebar, .toggle-btn, .btn, .overlay, .view-list-link, .messages-container { display: none !important; }
+            .main-content-wrapper { padding: 0 !important; min-height: auto !important; }
+            .login-box { box-shadow: none !important; border: none !important; margin: 0 !important; padding: 0 !important; max-width: 100% !important; text-align: right !important; }
+            form input, form textarea, form select, .select2-container { border: none !important; background: transparent !important; padding: 5px 0 !important; font-size: 16px !important; }
+            .select2-selection__rendered { padding: 0 !important; }
+            .select2-selection__arrow { display: none !important; }
+            .form-label { font-weight: bold !important; }
+        }
+
+        @media (max-width: 600px) {
+            .buttons-container { flex-direction: column; }
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'accounts/css/app.css' %}">
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="navbar-brand">
+            <svg viewBox="0 0 200 60" fill="none">
+                <path d="M16 50 L16 26 Q16 12 28 12 Q40 12 40 26 L40 50" stroke="#1C1C1E" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="80" cy="31" r="21" fill="#5ECBA1"/>
+                <path d="M69 35 Q80 44 91 35" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none"/>
+                <circle cx="130" cy="31" r="16" stroke="#1C1C1E" stroke-width="8" fill="none"/>
+                <path d="M157 50 L157 26 Q157 12 169 12 Q181 12 181 26 L181 50" stroke="#1C1C1E" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div>
+                <h1>حضانة نون</h1>
+                <div class="navbar-sub">سداد الرسوم</div>
+            </div>
+        </div>
+        <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+
+    {% include 'sidebar.html' %}
+            
+
+
+
+    <!-- MESSAGES -->
+    {% if messages %}
+    <div class="messages-container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags|default:'info' }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="main-content-wrapper">
+        <div class="login-box">
+
+            <h2>سداد الرسوم 💰</h2>
+            <p>بيانات الدفع والوصل</p>
+            
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="form-group">
+                    <label class="form-label" for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %}<span class="req">*</span>{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.errors %}
+                    <div class="field-errors">
+                        {% for error in field.errors %}
+                        <span class="field-error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <div class="buttons-container">
+                    <button type="submit" class="btn btn-submit">
+                        💾 حفظ الدفع
+                    </button>
+                    
+                    <button type="button" class="btn btn-print" onclick="printReceipt()">
+                        🖨️ طباعة الوصل
+                    </button>
+                </div>
+
+            </form>
+
+            <div class="view-list-link">
+                <a href="{% url 'payments_list' %}">📋 عرض قائمة المدفوعات</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // إعداد Select2 لكل عناصر select في الفورم
+            $('form select').each(function() {
+                $(this).select2({
+                    placeholder: "اختر أو ابحث...",
+                    allowClear: true,
+                    language: {
+                        noResults: function() { return "لا توجد نتائج"; },
+                        searching: function() { return "جارِ البحث..."; }
+                    },
+                    width: '100%'
+                });
+            });
+        });
+
+        function printReceipt() {
+            window.print();
+        }
+
+        function toggleSidebar(){
+            const sb=document.getElementById('sidebar');
+            const ov=document.getElementById('overlay');
+            const btn=document.getElementById('toggleBtn');
+            if(!sb.classList.contains('closed')){closeSidebar()}
+            else{sb.classList.remove('closed');ov.classList.add('show');btn.classList.add('open')}
+        }
+        
+        function closeSidebar(){
+            document.getElementById('sidebar').classList.add('closed');
+            document.getElementById('overlay').classList.remove('show');
+            document.getElementById('toggleBtn').classList.remove('open');
+        }
+    </script>
+
+</body>
+</html>

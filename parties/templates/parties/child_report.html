@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقرير الطفل اليومي</title>
+    <link rel="stylesheet" href="{% static 'parties/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'accounts/css/app.css' %}">
+</head>
+<body>
+<div class="home-box">
+    <h2>📋 تقرير الطفل اليومي</h2>
+    
+    {% if error %}
+        <p style="color:red; font-weight:bold;">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" action="{% url 'add_child_report' %}">
+        {% csrf_token %} 
+        
+        <h3>🕒 التاريخ والوقت</h3>
+        <input type="datetime-local" name="date_time" required>
+        <hr>
+        
+        <h3>👶 اسم الطفل</h3>
+        <select name="student_id" required>
+            <option value="">اختر الطالب من القائمة</option>
+            {% for person in persons %}
+                <option value="{{ person.pk }}">{{ person.name }}</option>
+            {% endfor %}
+        </select>
+        <hr>
+        
+        <h3>😊 حالة الطفل اليوم</h3>
+        <label><input type="radio" name="child_status" value="سعيد" required> 😊 سعيد</label><br>
+        <label><input type="radio" name="child_status" value="حزين"> 😢 حزين</label><br>
+        <label><input type="radio" name="child_status" value="مرهق"> 😫 مرهق</label><br>
+        <label><input type="radio" name="child_status" value="مريض"> 🤒 مريض</label><br>
+        <label><input type="radio" name="child_status" value="نائم"> 😴 نائم</label>
+        <hr>
+        
+        <h3>📚 المادة المدروسة اليوم</h3>
+        <label><input type="radio" name="study" value="English" required> 🇬🇧 English</label><br>
+        <label><input type="radio" name="study" value="Science"> 🔬 Science</label><br>
+        <label><input type="radio" name="study" value="Arabic"> 📖 اللغة العربية</label><br>
+        <label><input type="radio" name="study" value="Quran"> 📖 القرآن</label><br>
+        <label><input type="radio" name="study" value="Skills"> 🎯 تنمية مهارات</label><br>
+        <label><input type="radio" name="study" value="Math"> ➗ رياضيات</label><br>
+        <label><input type="radio" name="study" value="Other"> 📌 أخرى</label>
+        <hr>
+        
+        <h3>🧠 الاستجابة</h3>
+        <label><input type="radio" name="response_level" value="جيد" required> 👍 جيد</label><br>
+        <label><input type="radio" name="response_level" value="متوسط"> 😐 متوسط</label><br>
+        <label><input type="radio" name="response_level" value="ضعيف"> 👎 ضعيف</label>
+        <hr>
+        
+        <h3>🧒 السلوك</h3>
+        <label><input type="radio" name="behavior_level" value="مطيع" required> 🙂 مطيع</label><br>
+        <label><input type="radio" name="behavior_level" value="غير مطيع"> 🙁 غير مطيع</label><br>
+        <label><input type="radio" name="behavior_level" value="كثير الحركة"> ⚡ كثير الحركة</label>
+        <hr>
+        
+        <h3>🚻 الذهاب للحمام</h3>
+        من: <input type="time" name="bath_from"> إلى: <input type="time" name="bath_to">
+        <hr>
+        
+        <h3>😴 وقت النوم</h3>
+        من: <input type="time" name="sleep_from"> إلى: <input type="time" name="sleep_to">
+        <hr>
+        
+        <h3>📝 ملاحظة المعلمة</h3>
+        <textarea name="teacher_note" rows="4" cols="40"></textarea>
+        <br><br>
+        
+        <button type="submit" style="padding: 10px 20px; cursor: pointer;">💾 حفظ التقرير</button>
+    </form>
+</div>
+</body>
+</html>

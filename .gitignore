@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+
+# Local configuration and secrets
+.env
+
+# Runtime output
+staticfiles/
+*.log
+
+# Local generated data (keep this project copy's existing db.sqlite3 if needed)
+# db.sqlite3
+media/tmp/
+
+# Private local data
+db.sqlite3
+*.sqlite3
+media/

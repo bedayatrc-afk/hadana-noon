@@ -1,0 +1,166 @@
+{% with current=request.resolver_match.url_name %}
+
+<!-- overlay -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<div class="sidebar closed" id="sidebar">
+    <div class="sb-head">
+        <svg viewBox="0 0 200 60" fill="none">
+            <path d="M16 50 L16 26 Q16 12 28 12 Q40 12 40 26 L40 50" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="80" cy="31" r="21" fill="#5ECBA1"/>
+            <path d="M69 35 Q80 44 91 35" stroke="#1C1C1E" stroke-width="3" stroke-linecap="round" fill="none"/>
+            <circle cx="130" cy="31" r="16" stroke="white" stroke-width="8" fill="none"/>
+            <path d="M157 50 L157 26 Q157 12 169 12 Q181 12 181 26 L181 50" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <button class="sb-close" onclick="closeSidebar()">✕</button>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="sb-user">
+        <div class="sb-avatar">{{ user.username|first|upper }}</div>
+        <div>
+            <div class="sb-uname">{{ user.username }}</div>
+            <div class="sb-role">{{ request.user.userprofile.get_role_display }}</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="sb-section">
+        <div class="sb-section-label">الرئيسية</div>
+        <a href="{% url 'main_dashboard' %}" class="sb-link {% if current == 'main_dashboard' %}active{% endif %}">
+            <span class="sb-icon">🏠</span> لوحة التحكم
+        </a>
+    </div>
+
+    {% if user.is_authenticated %}
+        {% if request.user.userprofile.role == "admin" or request.user.userprofile.role == "teacher" %}
+        <div class="sb-section">
+            <div class="sb-section-label">التسجيلات</div>
+            <a href="{% url 'register_student' %}" class="sb-link {% if current == 'register_student' %}active{% endif %}">
+                <span class="sb-icon">🎒</span> تسجيل طالب
+            </a>
+            <a href="{% url 'register_parent' %}" class="sb-link {% if current == 'register_parent' %}active{% endif %}">
+                <span class="sb-icon">👨‍👩‍👧</span> تسجيل ولي أمر
+            </a>
+            <a href="{% url 'register_user' %}" class="sb-link {% if current == 'register_user' %}active{% endif %}">
+                <span class="sb-icon">👤</span> تسجيل مستخدم
+            </a>
+        </div>
+        {% endif %}
+
+        {% if request.user.userprofile.role == "admin" or request.user.userprofile.role == "teacher" %}
+        <div class="sb-section">
+            <div class="sb-section-label">الإدارة التعليمية</div>
+            <a href="{% url 'evaluation' %}" class="sb-link {% if current == 'evaluation' %}active{% endif %}">
+                <span class="sb-icon">📝</span> التقييم
+            </a>
+            <a href="{% url 'add_attendance' %}" class="sb-link {% if current == 'add_attendance' %}active{% endif %}">
+                <span class="sb-icon">✅</span> تسجيل الحضور
+            </a>
+            <a href="{% url 'attendance_list' %}" class="sb-link {% if current == 'attendance_list' %}active{% endif %}">
+                <span class="sb-icon">📋</span> قائمة الحضور
+            </a>
+            <a href="{% url 'parties_home' %}" class="sb-link {% if current == 'parties_home' %}active{% endif %}">
+                <span class="sb-icon">🗂️</span> لوحة المراجعة
+            </a>
+            <a href="{% url 'add_child_report' %}" class="sb-link {% if current == 'add_child_report' %}active{% endif %}">
+                <span class="sb-icon">🧒</span> تقرير طفل يومي
+            </a>
+            <a href="{% url 'child_reports_list' %}" class="sb-link {% if current == 'child_reports_list' %}active{% endif %}">
+                <span class="sb-icon">🗒️</span> قائمة التقارير اليومية
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="sb-section">
+            <div class="sb-section-label">متابعة النتائج</div>
+            <a href="{% url 'evaluations_list' %}" class="sb-link {% if current == 'evaluations_list' %}active{% endif %}">
+                <span class="sb-icon">📚</span> قائمة التقييمات
+            </a>
+        </div>
+
+        <div class="sb-section">
+            <div class="sb-section-label">المدفوعات</div>
+            {% if request.user.userprofile.role == "admin" %}
+            <a href="{% url 'pay_fees' %}" class="sb-link {% if current == 'pay_fees' %}active{% endif %}">
+                <span class="sb-icon">💳</span> تسجيل دفعة
+            </a>
+            <a href="{% url 'expenses' %}" class="sb-link {% if current == 'expenses' %}active{% endif %}">
+                <span class="sb-icon">💰</span> المصروفات
+            </a>
+            {% endif %}
+            {% if request.user.userprofile.role == "admin" or request.user.userprofile.role == "parent" or request.user.userprofile.role == "student" %}
+            <a href="{% url 'payments_list' %}" class="sb-link {% if current == 'payments_list' %}active{% endif %}">
+                <span class="sb-icon">🧾</span> سجل المدفوعات
+            </a>
+            {% endif %}
+        </div>
+
+        {% if request.user.userprofile.role == "parent" %}
+        <div class="sb-section">
+            <div class="sb-section-label">متابعة الأبناء</div>
+            <a href="{% url 'parent_dashboard' %}" class="sb-link {% if current == 'parent_dashboard' %}active{% endif %}">
+                <span class="sb-icon">👨‍👦</span> لوحة ولي الأمر
+            </a>
+            <a href="{% url 'link_student' %}" class="sb-link {% if current == 'link_student' %}active{% endif %}">
+                <span class="sb-icon">🔗</span> ربط طالب
+            </a>
+        </div>
+        {% endif %}
+
+        {% if request.user.userprofile.role == "admin" %}
+        <div class="sb-section">
+            <div class="sb-section-label">التقارير</div>
+            <a href="{% url 'reports' %}" class="sb-link {% if current == 'reports' %}active{% endif %}">
+                <span class="sb-icon">📊</span> التقارير
+            </a>
+        </div>
+        {% endif %}
+
+        {% if request.user.userprofile.role == "admin" %}
+        <div class="sb-section">
+            <div class="sb-section-label">النظام</div>
+            <a href="{% url 'settings' %}" class="sb-link {% if current == 'settings' %}active{% endif %}">
+                <span class="sb-icon">⚙️</span> الإعدادات
+            </a>
+        </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="sb-bottom">
+        {% if user.is_authenticated %}
+        <a href="{% url 'logout' %}" class="sb-logout">
+            <span class="sb-icon" style="background:rgba(255,100,80,.1)">🚪</span>
+            تسجيل الخروج
+        </a>
+        {% else %}
+        <a href="{% url 'login' %}" class="sb-link {% if current == 'login' %}active{% endif %}">
+            <span class="sb-icon">🔑</span> تسجيل الدخول
+        </a>
+        <a href="{% url 'register' %}" class="sb-link {% if current == 'register' %}active{% endif %}">
+            <span class="sb-icon">📝</span> إنشاء حساب
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function toggleSidebar(){
+    const sb=document.getElementById('sidebar');
+    const ov=document.getElementById('overlay');
+    const btn=document.getElementById('toggleBtn');
+    if(!sb.classList.contains('closed')){closeSidebar()}
+    else{sb.classList.remove('closed');ov.classList.add('show');if(btn)btn.classList.add('open')}
+}
+function closeSidebar(){
+    const sb=document.getElementById('sidebar');
+    const ov=document.getElementById('overlay');
+    const btn=document.getElementById('toggleBtn');
+    sb.classList.add('closed');
+    ov.classList.remove('show');
+    if(btn)btn.classList.remove('open');
+}
+</script>
+
+{% endwith %}

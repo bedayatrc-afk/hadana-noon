@@ -1,0 +1,303 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>🏫 حضانة نون - الإعدادات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #F5F2EC;
+            color: #1C1C1E;
+            min-height: 100vh;
+        }
+
+        /* ── Navbar ── */
+        .navbar {
+            background: #ffffff;
+            color: #000000;
+            padding: 14px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,.05);
+        }
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .text-white {
+                --bs-text-opacity: 1;
+    color: rgb(0 0 0) !important;
+        }
+        .navbar-brand svg { width: 90px; height: 30px; }
+        .navbar h1 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #000000;
+        }
+        .navbar-h1{
+            color: #000000;
+        }
+        .navbar-sub { font-size: 11px; color: #8E8E93; }
+
+        /* ── Toggle Button ── */
+        .toggle-btn {
+               background: transparent;
+    border: 1.5px solid #E5E0D5;
+    border-radius: 11px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 5px;
+    padding: 11px 10px;
+    transition: background .2s, border-color .2s;
+        }
+        .toggle-btn:hover { background: rgba(255,255,255,0.2); border-color: #5ECBA1; }
+        .toggle-btn span {
+            display: block; width: 18px; height: 2px;
+            background: #000000; border-radius: 2px; transition: all .3s;
+        }
+        .toggle-btn.open span:nth-child(1){ transform: translateY(7px) rotate(45deg); }
+        .toggle-btn.open span:nth-child(2){ opacity: 0; transform: scaleX(0); }
+        .toggle-btn.open span:nth-child(3){ transform: translateY(-7px) rotate(-45deg); }
+
+        /* ── Form Card ── */
+        .settings-card {
+            background: #fff;
+            padding: 36px 32px 32px;
+            border-radius: 24px;
+            box-shadow: 0 4px 60px rgba(0,0,0,.07), 0 0 0 1px rgba(0,0,0,.04);
+            margin-top: 30px;
+            margin-bottom: 50px;
+        }
+
+        .form-label {
+            font-size: 11px; font-weight: 700;
+            color: #8E8E93; letter-spacing: .6px;
+            text-transform: uppercase;
+        }
+        
+        .form-control {
+            border: 1.5px solid #E5E0D5;
+            background: #FAFAF7;
+            border-radius: 13px;
+            padding: 12px 16px;
+            font-family: 'Cairo', sans-serif;
+        }
+        .form-control:focus {
+            border-color: #5ECBA1;
+            box-shadow: 0 0 0 4px rgba(94,203,161,.13);
+            background: #fff;
+        }
+
+        .btn-main {
+            background: #1C1C1E; color: #fff;
+            border-radius: 14px; padding: 14px;
+            font-weight: 700; font-size: 15px;
+            border: none; width: 100%;
+            transition: background .2s, transform .15s;
+        }
+        .btn-main:hover { background: #2C2C2E; transform: translateY(-1px); color: #fff; }
+        
+        .btn-custom-warning {
+            background: #FEF3E2; color: #b7791f;
+            border: 1px solid #fbd38d; border-radius: 14px;
+            padding: 14px; font-weight: 600; width: 100%;
+            text-decoration: none; display: inline-block;
+            transition: all 0.2s;
+        }
+        .btn-custom-warning:hover { background: #fbd38d; color: #744210; }
+
+        .btn-custom-danger {
+            background: #FDE8E8; color: #c53030;
+            border: 1px solid #feb2b2; border-radius: 14px;
+            padding: 14px; font-weight: 600; width: 100%;
+            text-decoration: none; display: inline-block;
+            transition: all 0.2s;
+        }
+        .btn-custom-danger:hover { background: #feb2b2; color: #9b2c2c; }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            position: fixed; top: 0; right: 0; bottom: 0; width: 270px;
+            background: #1C1C1E; color: #fff;
+            transition: transform .35s cubic-bezier(.16,1,.3,1);
+            overflow-y: auto; z-index: 200; display: flex; flex-direction: column;
+        }
+        .sidebar.closed { transform: translateX(100%); }
+        .sb-head {
+            padding: 24px 24px 20px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .sb-head svg { width: 100px; height: 34px; }
+        .sb-close {
+            background: rgba(255,255,255,.08); border: none;
+            width: 34px; height: 34px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: #fff; font-size: 18px;
+            transition: background .2s; font-family: 'Cairo', sans-serif;
+        }
+        .sb-close:hover { background: rgba(255,255,255,.16); }
+        .sb-user {
+            margin: 16px 20px;
+            background: rgba(94,203,161,.12); border: 1px solid rgba(94,203,161,.25);
+            border-radius: 14px; padding: 12px 16px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .sb-avatar {
+            width: 38px; height: 38px; border-radius: 50%; background: #5ECBA1;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; font-weight: 700; color: #1C1C1E; flex-shrink: 0;
+        }
+        .sb-uname { font-size: 14px; font-weight: 600; color: #fff; }
+        .sb-role  { font-size: 11px; color: rgba(255,255,255,.4); margin-top: 1px; }
+        .sb-section { padding: 18px 20px 6px; }
+        .sb-section-label {
+            font-size: 10px; font-weight: 700; color: rgba(255,255,255,.3);
+            letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px;
+        }
+        .sb-link {
+            display: flex; align-items: center; gap: 11px;
+            color: rgba(255,255,255,.7); text-decoration: none;
+            padding: 10px 20px; margin: 2px 12px;
+            border-radius: 11px; font-size: 14px; font-weight: 600;
+            transition: background .2s, color .2s;
+        }
+        .sb-link:hover { background: rgba(255,255,255,.08); color: #fff; }
+        .sb-link.active { background: #5ECBA1; color: #1C1C1E; }
+        .sb-icon {
+            width: 32px; height: 32px; border-radius: 9px;
+            background: rgba(255,255,255,.08);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; flex-shrink: 0;
+        }
+        .sb-link.active .sb-icon { background: rgba(28,28,30,.15); }
+        .sb-bottom {
+            margin-top: auto; padding: 16px 12px;
+            border-top: 1px solid rgba(255,255,255,.08);
+        }
+        .sb-logout {
+            display: flex; align-items: center; gap: 11px;
+            color: rgba(255,100,80,.8); text-decoration: none;
+            padding: 10px 20px; border-radius: 11px;
+            font-size: 14px; font-weight: 600;
+            transition: background .2s, color .2s;
+            cursor: pointer; border: none; background: transparent;
+            width: 100%; font-family: 'Cairo', sans-serif;
+        }
+        .sb-logout:hover { background: rgba(255,100,80,.1); color: #ff6450; }
+        
+        .overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,.4);
+            z-index: 150; opacity: 0; pointer-events: none;
+            transition: opacity .35s; backdrop-filter: blur(2px);
+        }
+        .overlay.show { opacity: 1; pointer-events: all; }
+    </style>
+    <link rel="stylesheet" href="{% static 'accounts/css/app.css' %}">
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="navbar-brand">
+            <svg viewBox="0 0 200 60" fill="none">
+                <path d="M16 50 L16 26 Q16 12 28 12 Q40 12 40 26 L40 50" stroke="#000000" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="80" cy="31" r="21" fill="#5ECBA1"/>
+                <path d="M69 35 Q80 44 91 35" stroke="#000000" stroke-width="3" stroke-linecap="round" fill="none"/>
+                <circle cx="130" cy="31" r="16" stroke="#000000" stroke-width="8" fill="none"/>
+                <path d="M157 50 L157 26 Q157 12 169 12 Q181 12 181 26 L181 50" stroke="#000000" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="navbar-h1">
+                <h1 class="mb-0 text-white">حضانة نون</h1>
+                <div class="navbar-sub">الإعدادات</div>
+            </div>
+        </div>
+        <button class="toggle-btn" id="toggleBtn" onclick="toggleSidebar()">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+
+    {% include 'sidebar.html' %}
+            
+
+
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="settings-card">
+                    <h2 class="mb-2 fw-bold text-center">إعدادات الحساب</h2>
+                    <p class="text-muted text-center mb-4">تحديث بياناتك الشخصية وإعدادات الأمان</p>
+
+                    {% if messages %}
+                        <div class="mb-4">
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }} text-center py-3 rounded-4">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">اسم المستخدم</label>
+                            <input type="text" id="username" name="username" class="form-control" value="{{ user.username }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">البريد الإلكتروني</label>
+                            <input type="email" id="email" name="email" class="form-control" value="{{ user.email }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="first_name" class="form-label">الاسم الأول</label>
+                            <input type="text" id="first_name" name="first_name" class="form-control" value="{{ user.first_name }}">
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="last_name" class="form-label">اسم العائلة</label>
+                            <input type="text" id="last_name" name="last_name" class="form-control" value="{{ user.last_name }}">
+                        </div>
+
+                        <button type="submit" class="btn btn-main mb-4">💾 حفظ التغييرات</button>
+                    </form>
+
+                    <hr class="text-muted mb-4">
+
+                    <div class="mb-4">
+                        <h4 class="fs-5 fw-bold mb-3">الأمان وتغيير كلمة المرور</h4>
+                        <a href="{% url 'password_change' %}" class="btn-custom-warning">🔑 تغيير كلمة المرور</a>
+                    </div>
+
+                    <hr class="text-muted mb-4">
+
+                    <div>
+                        <h4 class="fs-5 fw-bold mb-3">جلسة العمل</h4>
+                        <a href="{% url 'logout' %}" class="btn-custom-danger">🚪 تسجيل الخروج</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

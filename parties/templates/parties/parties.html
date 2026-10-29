@@ -1,0 +1,224 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة مراجعة وتقارير الطلاب</title>
+    <link rel="stylesheet" href="{% static 'parties/css/style.css' %}">
+    <style>
+        /* إعدادات الخلفية العامة المتناسقة مع مشروعك */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #082f23 0%, #176b4a 70%, #d0ad5b 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* حاوية تجمع الجداول بشكل متناسق */
+        .main-container {
+            width: 100%;
+            max-width: 950px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+
+        /* كارد زجاجي فخم منسق ومريح للعين للنتائج */
+        .results-box {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        h4 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 35px;
+            font-size: 26px;
+            font-weight: bold;
+            border-bottom: 3px solid #d0ad5b;
+            padding-bottom: 15px;
+            margin-top: 5px;
+        }
+
+        .table-title {
+            font-size: 18px;
+            color: #111;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        /* 📊 تنسيق جداول عرض البيانات السحرية الاحترافية */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+            background-color: #ffffff;
+        }
+
+        .result-table th {
+            color: white;
+            padding: 14px 15px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .result-table td {
+            padding: 14px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            color: #444;
+            font-size: 14px;
+        }
+
+        .result-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .result-table tr:hover {
+            background-color: #f8fbfd;
+        }
+
+        /* البادجات الملونة لحالة الحضور والدفع والتقارير */
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: white;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-success { background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%); }
+        .badge-danger { background: linear-gradient(135deg, #dc3545 0%, #bd2130 100%); }
+        .badge-info { background: linear-gradient(135deg, #17a2b8 0%, #117a8b 100%); }
+        .badge-warning { background: linear-gradient(135deg, #ffc107 0%, #d39e00 100%); color: #333; }
+    </style>
+    <link rel="stylesheet" href="{% static 'accounts/css/app.css' %}">
+</head>
+<body>
+
+<div class="main-container">
+
+    <div class="results-box">
+        <h4>📋 لوحة مراجعة النتائج والتقارير المسجلة</h4>
+
+        <div class="buttons-header app-quick-actions">
+            <a class="app-btn app-btn-primary" href="{% url 'add_child_report' %}">＋ إضافة تقرير يومي</a>
+            <a class="app-btn app-btn-secondary" href="{% url 'child_reports_list' %}">📋 عرض التقارير اليومية</a>
+            {% if request.user.userprofile.role == "admin" %}
+            <a class="app-btn app-btn-secondary" href="{% url 'payment_list_view' %}">💳 سجل الدفعات</a>
+            {% endif %}
+        </div>
+
+        <div class="table-title">📅 سجل الحضور والغياب الأخير</div>
+        <div class="table-responsive">
+            <table class="result-table">
+                <thead>
+                    <tr style="background: linear-gradient(135deg, #082f23 0%, #176b4a 70%, #d0ad5b 100%);">
+                        <th>اسم الطفل</th>
+                        <th>التاريخ</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for att in all_attendance %}
+                    <tr>
+                        <td>{{ att.student }}</td>
+                        <td>{{ att.date|date:"Y-m-d" }}</td>
+                        <td>
+                            {% if att.status == "present" or att.status == "حضور" %}
+                            <span class="badge badge-success">حضور</span>
+                            {% else %}
+                            <span class="badge badge-danger">غياب</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" style="text-align:center; color:#888;">لا توجد سجلات حضور مسجلة حالياً.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-title">💵 سجل سداد الرسوم والمدفوعات</div>
+        <div class="table-responsive">
+            <table class="result-table">
+                <thead>
+                    <tr style="background: linear-gradient(135deg, #0b3d2e 0%, #21845b 100%);">
+                        <th>اسم الطفل</th>
+                        <th>المبلغ المسدد</th>
+                        <th>تاريخ العملية</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for pay in all_payments %}
+                    <tr>
+                        <td>{{ pay.student }}</td>
+                        <td><strong>{{ pay.amount }} جنيه</strong></td>
+                        <td>{{ pay.payment_date|date:"Y-m-d"|default:"-" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="3" style="text-align:center; color:#888;">لا توجد عمليات سداد رسوم مسجلة.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-title">📊 تقرير حالة الطفل والتقييمات اليومية</div>
+        <div class="table-responsive">
+            <table class="result-table">
+                <thead>
+                    <tr style="background: linear-gradient(135deg, #9b7327 0%, #d0ad5b 100%);">
+                        <th>اسم الطفل</th>
+                        <th>حالة الطفل ومزاجه</th>
+                        <th>ما تم دراسته</th>
+                        <th>مستوى الاستجابة</th>
+                        <th>مستوى السلوك</th>
+                        <th>ملاحظة المعلمة</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for report in all_reports %}
+                    <tr>
+                        <td><strong>{{ report.student }}</strong></td>
+                        <td><span class="badge badge-info">{{ report.child_status }}</span></td>
+                        <td>{{ report.study|default:"-" }}</td>
+                        <td><span class="badge badge-warning">{{ report.response_level|default:"-" }}</span></td>
+                        <td>{{ report.behavior_level|default:"-" }}</td>
+                        <td style="font-size: 13px; color: #555;">{{ report.teacher_note|default:"لا يوجد" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="6" style="text-align:center; color:#888;">لا توجد تقارير يومية مسجلة للأطفال اليوم.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>وصل سداد رسوم</title>
+    <style>
+        body {
+            font-family: "Tahoma", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .receipt {
+            width: 90%;
+            margin: 20px auto;
+            padding: 25px;
+            box-sizing: border-box;
+            border: 1px solid #000;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .header img {
+            height: 70px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 22px;
+            text-decoration: underline;
+        }
+        p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .signature {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+        }
+        @media print {
+            body { margin: 0; }
+            .receipt {
+                margin: 0 auto;
+                width: 100%;
+                height: 50%; /* نص الورقة من فوق */
+                border: none;
+            }
+            .btn-print { display: none; } /* نخفي زر الطباعة */
+        }
+        .btn-print {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: #000;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'accounts/css/app.css' %}">
+</head>
+<body>
+    <div class="receipt">
+        <div class="header">
+            <img src="/static/images/noon_logo.png" alt="شعار حضانة نون">
+            <span><strong>حضانة نون</strong></span>
+        </div>
+
+        <h2>وصل سداد رسوم</h2>
+
+        <p><strong>رقم الوصل:</strong> {{ payment.id }}</p>
+       <p><strong>التاريخ:</strong> {{ payment.payment_date|date:"d/m/Y H:i" }}</p>
+        <p><strong>تم استلام المبلغ وقدره:</strong> {{ payment.amount }} جنيه مصري</p>
+        <p><strong>وذلك مقابل:</strong> رسوم دراسية</p>
+        <p><strong>اسم الطالب:</strong> {{ payment.student.name }}</p>
+        <p><strong>طريقة السداد:</strong> {{ payment.payment_method }}</p>
+
+        <div class="signature">
+            <span>التوقيع: ____________</span>
+            <span>ختم: حضانة نون</span>
+        </div>
+    </div>
+
+    <button class="btn-print" onclick="window.print()">طباعة</button>
+</body>
+</html>
+

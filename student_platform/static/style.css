@@ -1,0 +1,57 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    min-height: 100vh;
+}
+
+/* صندوق عام */
+.container {
+    width: 400px;
+    margin: 100px auto;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* العناوين */
+h1, h2 {
+    text-align: center;
+    color: #333;
+}
+
+/* الحقول */
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* الأزرار */
+button {
+    width: 100%;
+    padding: 10px;
+    background: #4facfe;
+    border: none;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #2196f3;
+}
+
+/* الروابط */
+a {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    color: #fff;
+    text-decoration: none;
+}

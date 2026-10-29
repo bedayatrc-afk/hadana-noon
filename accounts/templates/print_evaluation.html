@@ -1,0 +1,334 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>طباعة تقييم الطالب</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: #f0f2f5;
+            padding: 30px 20px;
+        }
+
+        /* ════════════════════════════
+           PRINT CARD
+        ════════════════════════════ */
+        .print-card {
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto 24px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,.08);
+            border: 1px solid #EDEDEC;
+            overflow: hidden;
+        }
+
+        /* رأس الكارت */
+        .card-header {
+            background: #1C1C1E;
+            padding: 24px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-header-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .card-header-date {
+            font-size: 13px;
+            color: rgba(255,255,255,.5);
+            margin-top: 3px;
+        }
+
+        .card-logo {
+            width: 70px;
+            opacity: .9;
+        }
+
+        /* محتوى الكارت */
+        .card-body {
+            padding: 28px 32px;
+        }
+
+        /* ════════════════════════════
+           SECTIONS GRID
+        ════════════════════════════ */
+        .sections-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .section {
+            background: #F9F9F8;
+            border: 1px solid #EDEDEC;
+            border-radius: 12px;
+            padding: 14px 18px;
+        }
+
+        /* بعض الأقسام تاخد عرض كامل */
+        .section.full {
+            grid-column: 1 / -1;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #8E8E93;
+            letter-spacing: .5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .section-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1C1C1E;
+        }
+
+        /* وقت الحمام والنوم */
+        .time-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .time-item {
+            flex: 1;
+        }
+        .time-sub {
+            font-size: 11px;
+            color: #8E8E93;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        .time-val {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1C1C1E;
+        }
+        .time-sep {
+            font-size: 18px;
+            color: #C7C7CC;
+            padding-top: 10px;
+        }
+
+        /* الملاحظات */
+        .notes-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: #3A3A3C;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        /* الفوتر */
+        .card-footer {
+            border-top: 1px solid #F2F2F0;
+            padding: 16px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .footer-text {
+            font-size: 12px;
+            color: #C7C7CC;
+        }
+        .footer-badge {
+            background: #F0FAF5;
+            color: #1C7A50;
+            border: 1px solid #C6ECD9;
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* ════════════════════════════
+           PRINT BUTTON
+        ════════════════════════════ */
+        .btn-print {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 14px;
+            background: #1C1C1E;
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            transition: background .2s, transform .15s, box-shadow .2s;
+        }
+        .btn-print:hover {
+            background: #2C2C2E;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(28,28,30,.2);
+        }
+        .btn-print:active { transform: scale(.98); }
+
+        /* ════════════════════════════
+           @MEDIA PRINT — الأهم!
+        ════════════════════════════ */
+        @media print {
+            body {
+                background: #fff !important;
+                padding: 0 !important;
+            }
+
+            .print-card {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+                border-radius: 0 !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+            }
+
+            .btn-print {
+                display: none !important;
+            }
+
+            .card-header {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .section {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                break-inside: avoid;
+            }
+
+            @page {
+                margin: 1.5cm;
+                size: A4;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'accounts/css/app.css' %}">
+</head>
+<body>
+
+    <div class="print-card">
+
+        <!-- رأس الكارت -->
+        <div class="card-header">
+            <div>
+                <div class="card-header-title">📊 تقرير تقييم الطالب</div>
+                <div class="card-header-date">{{ evaluation.date|date:"d/m/Y" }}</div>
+            </div>
+            <svg class="card-logo" viewBox="0 0 200 60" fill="none">
+                <path d="M16 50 L16 26 Q16 12 28 12 Q40 12 40 26 L40 50" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="80" cy="31" r="21" fill="#5ECBA1"/>
+                <path d="M69 35 Q80 44 91 35" stroke="#1C1C1E" stroke-width="3" stroke-linecap="round" fill="none"/>
+                <circle cx="130" cy="31" r="16" stroke="white" stroke-width="8" fill="none"/>
+                <path d="M157 50 L157 26 Q157 12 169 12 Q181 12 181 26 L181 50" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <!-- محتوى -->
+        <div class="card-body">
+            <div class="sections-grid">
+
+                <div class="section">
+                    <div class="section-label">👦 الطالب</div>
+                    <div class="section-value">{{ evaluation.student.name }}</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-label">👩‍🏫 المعلمة</div>
+                    <div class="section-value">{{ evaluation.teacher.username }}</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-label">🙂 حالة الطفل</div>
+                    <div class="section-value">{{ evaluation.get_mood_display }}</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-label">📚 المادة</div>
+                    <div class="section-value">{{ evaluation.get_subject_display }}</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-label">📈 الاستجابة</div>
+                    <div class="section-value">{{ evaluation.get_response_display }}</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-label">🧑‍🍼 السلوك</div>
+                    <div class="section-value">{{ evaluation.get_behavior_display }}</div>
+                </div>
+
+                <div class="section">
+                    <div class="section-label">🚻 الحمام</div>
+                    <div class="time-row">
+                        <div class="time-item">
+                            <div class="time-sub">من</div>
+                            <div class="time-val">{{ evaluation.bathroom_from }}</div>
+                        </div>
+                        <div class="time-sep">←</div>
+                        <div class="time-item">
+                            <div class="time-sub">إلى</div>
+                            <div class="time-val">{{ evaluation.bathroom_to }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-label">😴 النوم</div>
+                    <div class="time-row">
+                        <div class="time-item">
+                            <div class="time-sub">من</div>
+                            <div class="time-val">{{ evaluation.sleep_from }}</div>
+                        </div>
+                        <div class="time-sep">←</div>
+                        <div class="time-item">
+                            <div class="time-sub">إلى</div>
+                            <div class="time-val">{{ evaluation.sleep_to }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section full">
+                    <div class="section-label">📝 الملاحظات</div>
+                    <div class="notes-value">{{ evaluation.notes }}</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- فوتر -->
+        <div class="card-footer">
+            <span class="footer-text">حضانة نون — نظام إدارة الطلاب</span>
+            <span class="footer-badge">✅ تقرير رسمي</span>
+        </div>
+
+    </div>
+
+    <!-- زر الطباعة — بيختفي عند الطباعة -->
+    <button class="btn-print" onclick="window.print()">
+        🖨️ طباعة التقرير
+    </button>
+
+</body>
+</html>
